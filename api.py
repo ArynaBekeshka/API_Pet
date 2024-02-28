@@ -49,7 +49,7 @@ class Pets:
         res = requests.post(self.base_url + f'pet/{pet_id}/image', headers=headers, files=files)
         status = res.status_code
         link = res.json()['link']
-        return status, link
+        return status, link, pet_id
 
     def get_list_pets(self) -> json:
         """The method POST/pets to the site Swagger gets a list of pets in your profile"""
@@ -104,13 +104,25 @@ class Pets:
         status = res.status_code
         return status
 
+    def delete_another_pet(self) -> json:
+        """The method DELETE/pet/{id} delete pet account  from another profile user"""
+        my_token = Pets().get_token()[0]
+        headers = {'Authorization': f'Bearer {my_token}'}
+        pet_id = 1666
+        res = requests.delete(self.base_url + f'pet/{pet_id}', headers=headers)
+        status = res.status_code
+        return status
 
-# Pets().get_token()
-# # Pets().get_list_users()
-# Pets().create_pet()
-# # Pets().post_pet_photo()
-# # Pets().get_list_pets()
-# Pets().update_pet()
-# Pets().put_like_pet()
-# Pets().put_comment_pet()
-# Pets().delete_pet()
+    def delete_all_created_pets(self) -> json:
+        """The method DELETE/pet{id} delete all pets account that were created"""
+        my_token = Pets().get_token()[0]
+        pet_list = Pets().get_list_pets()[1]
+        headers = {'Authorization': f'Bearer {my_token}'}
+        for pet in pet_list['list']:
+            pet_id = pet['id']
+            res = requests.delete(self.base_url + f'pet/{pet_id}', headers=headers)
+        status = res.status_code
+        return status
+
+
+

@@ -4,10 +4,10 @@ import pytest
 
 from api import Pets
 
-
 pt = Pets()
 
 
+@pytest.mark.positive
 def test_get_token():
     status = pt.get_token()[1]
     token = pt.get_token()[0]
@@ -63,3 +63,20 @@ def test_put_comment_pet():
 def test_delete_pet():
     status = pt.delete_pet()
     assert status == 200
+
+
+def test_delete_all_created_pets():
+    status = pt.delete_all_created_pets()
+    if status == 200:
+        print("Success: All created pets were deleted successfully.")
+    elif status == 422:
+        print("Error: Validation error occurred while deleting pets.")
+    else:
+        print(f"Error: Unexpected status code received: {status}")
+    assert status == 200
+
+
+@pytest.mark.negative
+def test_delete_another_pet():
+    status = pt.delete_another_pet()
+    assert status != 200
